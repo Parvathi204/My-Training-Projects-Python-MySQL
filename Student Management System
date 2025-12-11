@@ -1,0 +1,103 @@
+import mysql.connector
+
+# Database connection
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="",
+    database="meenakshi"
+)
+
+cursor = db.cursor()
+
+# Add Student
+def add_student():
+    name = input("Enter student name: ")
+    age = int(input("Enter age: "))
+    class_name = input("Enter class: ")
+    marks = float(input("Enter marks: "))
+
+    query = "INSERT INTO students (name, age, classes, marks) VALUES (%s, %s, %s, %s)"
+    cursor.execute(query, (name, age, class_name, marks))
+    db.commit()
+
+    print("\n✔ Student Added Successfully!\n")
+
+# Update Student
+def update_student():
+    name = input("Enter the name of the student to update: ")
+
+    print("\nEnter new details:")
+    new_age = int(input("New age: "))
+    new_class = input("New class: ")
+    new_marks = float(input("New marks: "))
+
+    query = "UPDATE students SET age=%s, classes=%s, marks=%s WHERE name=%s"
+    cursor.execute(query, (new_age, new_class, new_marks, name))
+    db.commit()
+
+    print("\n✔ Student Updated Successfully!\n")
+
+# Delete Student
+def delete_student():
+    name = input("Enter the student name to delete: ")
+
+    cursor.execute("DELETE FROM students WHERE name=%s", (name,))
+    db.commit()
+
+    print("\n🗑 Student Deleted.\n")
+
+# View All Students
+def view_students():
+    cursor.execute("SELECT * FROM students")
+    rows = cursor.fetchall()
+
+    print("\n----- All Students -----\n")
+    for row in rows:
+        print(f"Name: {row[0]} | Age: {row[1]} | Class: {row[2]} | Marks: {row[3]}")
+    print()
+
+# Search (by name only, as per your requirement)
+def search_student():
+
+    name = input("Enter student name to search: ")
+
+    cursor.execute("SELECT * FROM students WHERE name=%s", (name,))
+    row = cursor.fetchone()
+
+    if row:
+        print("\n----- Student Found -----\n")
+        print(f"Name: {row[0]} | Age: {row[1]} | Class: {row[2]} | Marks: {row[3]}\n")
+    else:
+        print("\n❌ No Student Found with that name\n")
+
+# Main Menu
+def main():
+    while True:
+        print("=== Student Management System ===")
+        print("1. Add Student")
+        print("2. Update Student")
+        print("3. Delete Student")
+        print("4. View All Students")
+        print("5. Search Student")
+        print("6. Exit")
+
+        choice = input("Choose an option: ")
+
+        if choice == "1":
+            add_student()
+        elif choice == "2":
+            update_student()
+        elif choice == "3":
+            delete_student()
+        elif choice == "4":
+            view_students()
+        elif choice == "5":
+            search_student()
+        elif choice == "6":
+            print("Exiting program...")
+            break
+        else:
+            print("Invalid Input, try again.\n")
+
+main()
