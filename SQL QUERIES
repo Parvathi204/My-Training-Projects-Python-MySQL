@@ -1,0 +1,23 @@
+#SQL QUERIES
+#Create or use a database
+#Create a table in the name of books,issues,users
+
+CREATE TABLE books (
+    title VARCHAR(200) PRIMARY KEY,
+    author VARCHAR(100),
+    year INT
+);
+
+CREATE TABLE users (
+    name VARCHAR(100) PRIMARY KEY,
+    contact VARCHAR(100)
+);
+
+CREATE TABLE issued (
+    title VARCHAR(200),
+    user_name VARCHAR(100),
+    issue_date DATE,
+    return_date DATE,
+    status VARCHAR(20),
+    PRIMARY KEY (title, user_name, issue_date)
+)
