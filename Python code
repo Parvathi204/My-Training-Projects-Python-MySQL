@@ -1,0 +1,104 @@
+import mysql.connector
+
+# Database connection
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="",
+    database="meenakshi"
+)
+
+cursor = db.cursor()
+
+# 1. Add Product
+def add_product():
+    name = input("Enter product name: ")
+    price = float(input("Enter product price: "))
+    qty = int(input("Enter quantity: "))
+
+    query = "INSERT INTO products (name, price, quantity) VALUES (%s, %s, %s)"
+    cursor.execute(query, (name, price, qty))
+    db.commit()
+
+    print("\n✔ Product Added Successfully!\n")
+
+# 2. Update Product Info
+def update_product():
+    name = input("Enter product name to update: ")
+
+    new_price = float(input("Enter new price: "))
+    new_qty = int(input("Enter new quantity: "))
+
+    query = "UPDATE products SET price=%s, quantity=%s WHERE name=%s"
+    cursor.execute(query, (new_price, new_qty, name))
+    db.commit()
+
+    print("\n✔ Product Updated Successfully!\n")
+
+# 3. Delete Product
+def delete_product():
+    name = input("Enter product name to delete: ")
+
+    cursor.execute("DELETE FROM products WHERE name=%s", (name,))
+    db.commit()
+
+    print("\n🗑 Product Deleted.\n")
+
+# 4. Check Stock
+def check_stock():
+    name = input("Enter product name to check stock: ")
+
+    cursor.execute("SELECT quantity FROM products WHERE name=%s", (name,))
+    result = cursor.fetchone()
+
+    if result:
+        print(f"\nStock of '{name}': {result[0]} units\n")
+    else:
+        print("\n❌ Product Not Found\n")
+
+# 5. Generate Report: Total Stock Value
+def stock_value_report():
+    cursor.execute("SELECT SUM(price * quantity) FROM products")
+    total_value = cursor.fetchone()[0]
+
+    print("\n----- Total Stock Value -----")
+    print("Total Value: ₹", total_value if total_value else 0)
+    print()
+
+# View all products (Extra useful)
+def view_products():
+    cursor.execute("SELECT * FROM products")
+    rows = cursor.fetchall()
+
+    print("\n----- Product List -----\n")
+    for row in rows:
+        print(f"Name: {row[0]} | Price: ₹{row[1]} | Quantity: {row[2]}")
+    print()
+
+# Main Menu
+def main():
+    while True:
+        print("=== Inventory Management System ===")
+        print("1. Add Product")
+        print("2. Update Product Info")
+        print("3. Delete Product")
+        print("4. Check Stock")
+        print("5. Generate Total Stock Value Report")
+        print("6. View All Products")
+        print("7. Exit")
+
+        choice = input("Choose an option: ")
+
+        if choice == "1": add_product()
+        elif choice == "2": update_product()
+        elif choice == "3": delete_product()
+        elif choice == "4": check_stock()
+        elif choice == "5": stock_value_report()
+        elif choice == "6": view_products()
+        elif choice == "7":
+            print("Exiting...")
+            break
+        else:
+            print("\nInvalid option! Try again.\n")
+
+main()
