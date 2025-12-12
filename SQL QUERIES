@@ -1,0 +1,12 @@
+#SQL QUERIES
+#Create or use a database
+#Create a table in the name of Patients
+
+CREATE TABLE patients (
+    patient_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_name VARCHAR(50),
+    age INT,
+    disease VARCHAR(50),
+    admitted_date VARCHAR(20),
+    status VARCHAR(20)  -- "Admitted" or "Discharged"
+);
