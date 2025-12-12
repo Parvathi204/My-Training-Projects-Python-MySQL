@@ -1,9 +1,0 @@
-#SQL Query :
-# USe a database or create a database
-#and then create Students Table
-CREATE TABLE students (
-    name VARCHAR(50),
-    age INT,
-    course VARCHAR(50),
-    marks INT
-);
