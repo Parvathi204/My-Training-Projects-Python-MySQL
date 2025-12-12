@@ -1,0 +1,16 @@
+#SQL QUERIES
+#Create or use a database
+#Create a table in the name of books,issues,users
+
+
+CREATE TABLE menu(
+    item_name VARCHAR(100) PRIMARY KEY,
+    price FLOAT
+);
+
+CREATE TABLE orders(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    item_name VARCHAR(100),
+    quantity INT,
+    payment_status VARCHAR(50)
+);
