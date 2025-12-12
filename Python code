@@ -1,6 +1,7 @@
 import mysql.connector
-from datetime import date, datetime
-def connect():
+
+# ---------------- DATABASE CONNECTION ----------------
+def connect_database():
     return mysql.connector.connect(
         host="localhost",
         user="root",
@@ -8,256 +9,194 @@ def connect():
         database="meenakshi"
     )
 
-# ----------------------------
-# BOOK OPERATIONS
-# ----------------------------
-def add_book():
-    title = input("Enter book title: ").strip()
-    author = input("Enter author: ").strip()
-    try:
-        year = int(input("Enter published year: ").strip())
-    except:
-        print("Invalid year. Cancelling.\n")
+# ---------------- CREATE TABLE ----------------
+def create_table():
+    con = connect_database()
+    cur = con.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS patients (
+            patient_id INT AUTO_INCREMENT PRIMARY KEY,
+            patient_name VARCHAR(50),
+            age INT,
+            disease VARCHAR(50),
+            admitted_date VARCHAR(20),
+            status VARCHAR(20)
+        )
+    """)
+    con.commit()
+    con.close()
+
+# ---------------- ADD PATIENT ----------------
+def add_patient():
+    con = connect_database()
+    cur = con.cursor()
+
+    name = input("Enter patient name: ")
+    age = int(input("Enter age: "))
+    disease = input("Enter disease: ")
+    date = input("Enter admitted date (DD-MM-YYYY): ")
+    status = "Admitted"
+
+    cur.execute("INSERT INTO patients (patient_name, age, disease, admitted_date, status) VALUES (%s, %s, %s, %s, %s)",
+                (name, age, disease, date, status))
+
+    con.commit()
+    con.close()
+    print("Patient added successfully!\n")
+
+# ---------------- UPDATE PATIENT ----------------
+def update_patient():
+    con = connect_database()
+    cur = con.cursor()
+
+    pid = int(input("Enter patient ID to update: "))
+
+    print("\n1. Update Name")
+    print("2. Update Age")
+    print("3. Update Disease")
+    print("4. Update Admitted Date")
+    print("5. Update Status (Admit/Discharge)")
+
+    choice = int(input("Enter your choice: "))
+
+    if choice == 1:
+        new_name = input("Enter new name: ")
+        cur.execute("UPDATE patients SET patient_name=%s WHERE patient_id=%s", (new_name, pid))
+    elif choice == 2:
+        new_age = int(input("Enter new age: "))
+        cur.execute("UPDATE patients SET age=%s WHERE patient_id=%s", (new_age, pid))
+    elif choice == 3:
+        new_disease = input("Enter new disease: ")
+        cur.execute("UPDATE patients SET disease=%s WHERE patient_id=%s", (new_disease, pid))
+    elif choice == 4:
+        new_date = input("Enter new admitted date: ")
+        cur.execute("UPDATE patients SET admitted_date=%s WHERE patient_id=%s", (new_date, pid))
+    elif choice == 5:
+        print("Choose Status: 1. Admitted  2. Discharged")
+        st = input("Enter choice: ")
+        if st == "1":
+            status = "Admitted"
+        elif st == "2":
+            status = "Discharged"
+        else:
+            print("Invalid choice!")
+            return
+        cur.execute("UPDATE patients SET status=%s WHERE patient_id=%s", (status, pid))
+    else:
+        print("Invalid choice!")
         return
 
-    db = connect()
-    cur = db.cursor()
-    try:
-        cur.execute("INSERT INTO books (title, author, year) VALUES (%s, %s, %s)",
-                    (title, author, year))
-        db.commit()
-        print("\n✔ Book added successfully!\n")
-    except mysql.connector.IntegrityError:
-        print("\n❌ A book with that title already exists.\n")
-    finally:
-        cur.close(); db.close()
+    con.commit()
+    con.close()
+    print("Patient information updated!\n")
 
-def update_book():
-    title = input("Enter the title of the book to update: ").strip()
-    db = connect(); cur = db.cursor()
-    cur.execute("SELECT * FROM books WHERE title=%s", (title,))
-    if not cur.fetchone():
-        print("\n❌ Book not found.\n"); cur.close(); db.close(); return
+# ---------------- DELETE PATIENT ----------------
+def delete_patient():
+    con = connect_database()
+    cur = con.cursor()
 
-    print("What do you want to update?")
-    print("1. Title")
-    print("2. Author")
-    print("3. Year")
-    choice = input("Choice: ").strip()
+    pid = int(input("Enter patient ID to delete: "))
+    cur.execute("DELETE FROM patients WHERE patient_id=%s", (pid,))
+    con.commit()
+    con.close()
+    print("Patient deleted successfully!\n")
+
+# ---------------- SEARCH PATIENT ----------------
+def search_patient():
+    con = connect_database()
+    cur = con.cursor()
+
+    pid = input("Enter patient ID or name to search: ")
+
+    # If ID is numeric, search by ID
+    if pid.isdigit():
+        cur.execute("SELECT * FROM patients WHERE patient_id=%s", (pid,))
+    else:
+        cur.execute("SELECT * FROM patients WHERE patient_name=%s", (pid,))
+
+    row = cur.fetchone()
+
+    if row:
+        print("\n--- Patient Details ---")
+        print("ID:", row[0])
+        print("Name:", row[1])
+        print("Age:", row[2])
+        print("Disease:", row[3])
+        print("Admitted Date:", row[4])
+        print("Status:", row[5], "\n")
+    else:
+        print("Patient not found!\n")
+
+    con.close()
+
+# ---------------- DISPLAY ALL ----------------
+def display_patients():
+    con = connect_database()
+    cur = con.cursor()
+
+    cur.execute("SELECT * FROM patients")
+    rows = cur.fetchall()
+
+    print("\n--- All Patients ---")
+    for row in rows:
+        print(f"ID: {row[0]} | Name: {row[1]} | Age: {row[2]} | Disease: {row[3]} | Admitted: {row[4]} | Status: {row[5]}")
+    print()
+    con.close()
+
+# ---------------- TRACK ADMISSION & DISCHARGE ----------------
+def track_admission_discharge():
+    con = connect_database()
+    cur = con.cursor()
+
+    print("\n1. View Admitted Patients")
+    print("2. View Discharged Patients")
+    choice = input("Enter choice: ")
 
     if choice == "1":
-        new_title = input("Enter new title: ").strip()
-        try:
-            cur.execute("UPDATE books SET title=%s WHERE title=%s", (new_title, title))
-            db.commit()
-            print("\n✔ Title updated.\n")
-        except mysql.connector.IntegrityError:
-            print("\n❌ A book with the new title already exists.\n")
-
+        cur.execute("SELECT * FROM patients WHERE status='Admitted'")
+        print("\n--- Admitted Patients ---")
     elif choice == "2":
-        new_author = input("Enter new author: ").strip()
-        cur.execute("UPDATE books SET author=%s WHERE title=%s", (new_author, title))
-        db.commit()
-        print("\n✔ Author updated.\n")
+        cur.execute("SELECT * FROM patients WHERE status='Discharged'")
+        print("\n--- Discharged Patients ---")
+    else:
+        print("Invalid choice!\n")
+        return
 
+    rows = cur.fetchall()
+    for row in rows:
+        print(f"ID: {row[0]} | Name: {row[1]} | Age: {row[2]} | Disease: {row[3]} | Admitted: {row[4]} | Status: {row[5]}")
+    print()
+    con.close()
+
+# ---------------- MAIN MENU ----------------
+create_table()
+
+while True:
+    print("===== HOSPITAL PATIENT RECORD SYSTEM =====")
+    print("1. Add Patient Record")
+    print("2. Update Patient Details")
+    print("3. Delete Patient Record")
+    print("4. Search Patient by Name or ID")
+    print("5. View All Patient Records")
+    print("6. Track Admission & Discharge Status")
+    print("7. Exit")
+
+    choice = input("Enter your choice: ")
+
+    if choice == "1":
+        add_patient()
+    elif choice == "2":
+        update_patient()
     elif choice == "3":
-        try:
-            new_year = int(input("Enter new year: ").strip())
-            cur.execute("UPDATE books SET year=%s WHERE title=%s", (new_year, title))
-            db.commit()
-            print("\n✔ Year updated.\n")
-        except:
-            print("\n❌ Invalid year.\n")
+        delete_patient()
+    elif choice == "4":
+        search_patient()
+    elif choice == "5":
+        display_patients()
+    elif choice == "6":
+        track_admission_discharge()
+    elif choice == "7":
+        print("Exiting Program...")
+        break
     else:
-        print("\nInvalid choice.\n")
-
-    cur.close(); db.close()
-
-def delete_book():
-    title = input("Enter book title to delete: ").strip()
-    db = connect(); cur = db.cursor()
-    cur.execute("SELECT * FROM books WHERE title=%s", (title,))
-    if not cur.fetchone():
-        print("\n❌ Book not found.\n"); cur.close(); db.close(); return
-
-    # optional: check if currently issued
-    cur.execute("SELECT * FROM issued WHERE title=%s AND status='issued'", (title,))
-    if cur.fetchone():
-        print("\n❌ Cannot delete — book is currently issued. Return it first.\n")
-        cur.close(); db.close(); return
-
-    cur.execute("DELETE FROM books WHERE title=%s", (title,))
-    db.commit()
-    print("\n🗑 Book deleted.\n")
-    cur.close(); db.close()
-
-def view_books():
-    db = connect(); cur = db.cursor()
-    cur.execute("SELECT * FROM books")
-    rows = cur.fetchall()
-    if not rows:
-        print("\nNo books in the library.\n")
-    else:
-        print("\n--- BOOK LIST ---")
-        for r in rows:
-            print(f"Title: {r[0]} | Author: {r[1]} | Year: {r[2]}")
-        print()
-    cur.close(); db.close()
-
-# ----------------------------
-# USER OPERATIONS
-# ----------------------------
-def register_user():
-    name = input("Enter user name: ").strip()
-    contact = input("Enter contact info (phone/email): ").strip()
-
-    db = connect(); cur = db.cursor()
-    try:
-        cur.execute("INSERT INTO users (name, contact) VALUES (%s, %s)", (name, contact))
-        db.commit()
-        print("\n✔ User registered successfully!\n")
-    except mysql.connector.IntegrityError:
-        print("\n❌ A user with that name already exists.\n")
-    finally:
-        cur.close(); db.close()
-
-def view_users():
-    db = connect(); cur = db.cursor()
-    cur.execute("SELECT * FROM users")
-    rows = cur.fetchall()
-    if not rows:
-        print("\nNo registered users.\n")
-    else:
-        print("\n--- REGISTERED USERS ---")
-        for r in rows:
-            print(f"Name: {r[0]} | Contact: {r[1]}")
-        print()
-    cur.close(); db.close()
-
-# ----------------------------
-# ISSUE / RETURN OPERATIONS
-# ----------------------------
-def issue_book():
-    title = input("Enter book title to issue: ").strip()
-    user_name = input("Enter user name: ").strip()
-
-    db = connect(); cur = db.cursor()
-    # check book exists
-    cur.execute("SELECT * FROM books WHERE title=%s", (title,))
-    if not cur.fetchone():
-        print("\n❌ Book not found.\n"); cur.close(); db.close(); return
-
-    # check user exists
-    cur.execute("SELECT * FROM users WHERE name=%s", (user_name,))
-    if not cur.fetchone():
-        print("\n❌ User not registered. Register the user first.\n"); cur.close(); db.close(); return
-
-    # check if already issued to someone (simple check — if any 'issued' status exists)
-    cur.execute("SELECT * FROM issued WHERE title=%s AND status='issued'", (title,))
-    if cur.fetchone():
-        print("\n❌ Book already issued to another user. Cannot issue now.\n"); cur.close(); db.close(); return
-
-    issue_d = date.today()
-    cur.execute(
-        "INSERT INTO issued (title, user_name, issue_date, return_date, status) VALUES (%s, %s, %s, %s, %s)",
-        (title, user_name, issue_d, None, "issued")
-    )
-    db.commit()
-    print(f"\n✔ Book '{title}' issued to {user_name} on {issue_d}.\n")
-    cur.close(); db.close()
-
-def return_book():
-    title = input("Enter book title to return: ").strip()
-    user_name = input("Enter user name: ").strip()
-
-    db = connect(); cur = db.cursor()
-    # find the issued row with status 'issued'
-    cur.execute(
-        "SELECT issue_date FROM issued WHERE title=%s AND user_name=%s AND status='issued'",
-        (title, user_name)
-    )
-    row = cur.fetchone()
-    if not row:
-        print("\n❌ No record found of this book being issued to this user.\n"); cur.close(); db.close(); return
-
-    issue_date = row[0]
-    return_d = date.today()
-    cur.execute(
-        "UPDATE issued SET return_date=%s, status=%s WHERE title=%s AND user_name=%s AND issue_date=%s",
-        (return_d, "returned", title, user_name, issue_date)
-    )
-    db.commit()
-    print(f"\n✔ Book '{title}' returned by {user_name} on {return_d}.\n")
-    cur.close(); db.close()
-
-def view_issued_books():
-    db = connect(); cur = db.cursor()
-    cur.execute("SELECT title, user_name, issue_date, return_date, status FROM issued ORDER BY issue_date DESC")
-    rows = cur.fetchall()
-    if not rows:
-        print("\nNo issued/returned records.\n")
-    else:
-        print("\n--- ISSUED BOOKS ---")
-        for r in rows:
-            title, user_name, issue_d, return_d, status = r
-            print(f"Book: {title} | User: {user_name} | Issued: {issue_d} | Returned: {return_d} | Status: {status}")
-        print()
-    cur.close(); db.close()
-
-# ----------------------------
-# SIMPLE REPORTS
-# ----------------------------
-def total_books_report():
-    db = connect(); cur = db.cursor()
-    cur.execute("SELECT COUNT(*) FROM books")
-    total = cur.fetchone()[0]
-    print(f"\nTotal books in library: {total}\n")
-    cur.close(); db.close()
-
-def currently_issued_report():
-    db = connect(); cur = db.cursor()
-    cur.execute("SELECT COUNT(*) FROM issued WHERE status='issued'")
-    total = cur.fetchone()[0]
-    print(f"\nCurrently issued books count: {total}\n")
-    cur.close(); db.close()
-
-# ----------------------------
-# MAIN MENU
-# ----------------------------
-def main():
-    while True:
-        print("===== LIBRARY MANAGEMENT SYSTEM =====")
-        print("1. Add Book")
-        print("2. Update Book Info")
-        print("3. Delete Book")
-        print("4. View All Books")
-        print("5. Register User")
-        print("6. View Users")
-        print("7. Issue Book")
-        print("8. Return Book")
-        print("9. View Issued Books")
-        print("10. Total Books Report")
-        print("11. Currently Issued Report")
-        print("12. Exit")
-
-        choice = input("Enter choice: ").strip()
-
-        if choice == "1": add_book()
-        elif choice == "2": update_book()
-        elif choice == "3": delete_book()
-        elif choice == "4": view_books()
-        elif choice == "5": register_user()
-        elif choice == "6": view_users()
-        elif choice == "7": issue_book()
-        elif choice == "8": return_book()
-        elif choice == "9": view_issued_books()
-        elif choice == "10": total_books_report()
-        elif choice == "11": currently_issued_report()
-        elif choice == "12":
-            print("Exiting program...")
-            break
-        else:
-            print("\nInvalid choice, try again.\n")
-
-if __name__ == "__main__":
-    main()
+        print("Invalid choice! Try again.\n")

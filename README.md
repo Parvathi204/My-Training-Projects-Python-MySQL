@@ -1,103 +1,101 @@
-# 📚 Project 4 – Library Management System (Python + MySQL)
+# 🏥 Project 6 – Hospital Patient Record System (Python + MySQL)
 
-Welcome to the **Library Management System**, a Python-based application integrated with MySQL to manage books and library users efficiently. This system allows librarians or administrators to **add, update, delete books, register users, issue and return books**, and view all issued books — all through a simple menu-driven interface.  
+Welcome to the **Hospital Patient Record System**, a Python-based application integrated with MySQL that helps manage patient information efficiently. This system allows healthcare administrators to **add, update, delete, and search patient records**, as well as **track admission and discharge status** — all through an easy-to-use, menu-driven interface.  
 
-It’s designed to simulate real-world library operations, providing hands-on experience in **data management, database integration, and backend logic**, making it perfect for academic projects or learning exercises.
+Designed for learning and demonstration purposes, this system provides hands-on experience in **healthcare data management, database integration, and backend logic**, making it perfect for academic projects or beginners exploring Python and MySQL.
 
 ---
 
 ## 🌟 Key Features
 
-### 📖 1. Add / Update / Delete Books
-- **Add Books:** Enter book details such as:
-  - **Book Title**  
-  - **Author**  
-  - **Quantity Available**  
-- **Update Books:** Modify existing book details using the **Book ID**.  
-- **Delete Books:** Remove books from the system if they are outdated or unavailable.  
-- Ensures accurate and up-to-date book records in the library database.
+### 📝 1. Add New Patient Record
+- Register a new patient by entering:
+  - **Patient Name**  
+  - **Age**  
+  - **Medical Condition / Diagnosis**  
+  - **Admission Status** (Admitted / Not Admitted)  
+- All details are stored securely in the MySQL database.  
+- Ensures structured storage for efficient patient management.
 
 ---
 
-### 👥 2. Register Users
-- Register new library users by collecting:
-  - **User Name**  
-  - **User ID / Membership ID**  
-  - **Contact Information**  
-- Keeps a structured record of all library members.  
-- Supports issuing books and tracking borrowings efficiently.
+### 🏥 2. Update Patient Details
+- Modify patient information using the **Patient ID**:  
+  - Update **name, age, gender, diagnosis**, or **admission/discharge status**  
+- Helps maintain accurate and up-to-date medical records.  
+- Supports real-time updates for hospital staff.
 
 ---
 
-### 📚 3. Issue / Return Books
-- **Issue Books:** Assign books to registered users by entering:
-  - **User ID**  
-  - **Book ID**  
-- Automatically updates book availability in the database.  
-- **Return Books:** When books are returned:
-  - Updates inventory  
-  - Records return date  
-- Ensures accurate tracking of which user has which book at any time.
+### ❌ 3. Delete Patient Record
+- Permanently remove outdated or discharged patient records using **Patient ID**.  
+- Keeps the database clean and relevant.  
+- Ensures proper management of patient data.
 
 ---
 
-### 📝 4. View Issued Books
-- Retrieve a list of all currently issued books along with:
-  - **Book ID**  
-  - **Book Title**  
-  - **User ID / Name**  
-  - **Issue Date**  
-- Helps librarians monitor borrowed books and due dates efficiently.
+### 🔍 4. Search Patient by Name or ID
+- Quickly locate a patient using:
+  - **Patient ID**  
+  - **Patient Name**  
+- Useful for verifying patient details, updating records, or monitoring treatment progress.
+
+---
+
+### 📋 5. View All Patient Records
+- Retrieve a complete list of all patients in the hospital, including:
+  - **Patient ID**  
+  - **Name**  
+  - **Age**   
+  - **Diagnosis**  
+  - **Admission / Discharge Status**  
+- Provides a comprehensive overview of hospital patients for administrators.
+
+---
+
+### 🏥 6. Track Admission & Discharge Status
+- Monitor which patients are currently admitted and which have been discharged.  
+- Update the status easily when a patient is admitted or discharged.  
+- Ensures efficient **hospital bed management and patient flow tracking**.
 
 ---
 
 ## 🗄 Database Integration (MySQL)
-The system uses MySQL for storing all book and user information securely and reliably.  
+The system uses MySQL for storing patient records securely and efficiently.
 
 ### **Tables Used**
-1. **books**
-   - `book_id` – Primary Key  
-   - `title` – Book Title  
-   - `author` – Author Name  
-   - `quantity` – Number of Copies Available  
-
-2. **users**
-   - `user_id` – Primary Key  
-   - `name` – User Name  
-   - `contact` – Contact Information  
-
-3. **issued_books**
-   - `issue_id` – Primary Key  
-   - `book_id` – Foreign Key (linked to books)  
-   - `user_id` – Foreign Key (linked to users)  
-   - `issue_date` – Date Book Was Issued  
-   - `return_date` – Date Book Was Returned  
+1. **patients**
+   - `patient_id` – Primary Key, Auto Increment  
+   - `name` – Patient Name  
+   - `age` – Patient Age  
+   - `diagnosis` – Medical Condition  
+   - `status` – Admission / Discharge Status  
 
 **Benefits of MySQL Integration:**
-- Secure and persistent storage for books and users  
-- Efficient **CRUD operations** for library management  
-- Real-time updates on issued and available books  
-- Structured organization and easy retrieval of records  
+- Reliable and structured storage of patient data  
+- Efficient **CRUD operations** for patient management  
+- Easy retrieval of records for search and reporting  
+- Real-time updates for admission and discharge tracking  
 
-Python interacts with MySQL using **mysql-connector-python**, providing smooth database operations.
+Python interacts with MySQL using **mysql-connector-python**, ensuring smooth database operations and real-time record management.
 
 ---
 
 ## 🎯 Purpose of the Project
-The Library Management System aims to:
-- Digitize library operations for easy management  
-- Track books and users efficiently  
-- Automate book issuing and returning  
-- Maintain accurate and up-to-date records  
-- Teach **Python and MySQL CRUD operations** and backend logic  
+The Hospital Patient Record System aims to:
+- Digitize patient management and hospital operations  
+- Track admissions, discharges, and medical records efficiently  
+- Maintain accurate and up-to-date patient information  
+- Teach **Python + MySQL CRUD operations** in a real-world healthcare scenario  
+- Provide a mini-project suitable for academic submission or portfolio building  
 
-It’s a practical project for students, providing a real-world example of how libraries manage inventory and user data.
+It’s a practical example of **how hospitals manage patient data**, helping students understand database-driven application development in healthcare.
 
 ---
 
 ## ⚙️ Technologies Used
 - **Python 3** – Core programming language  
-- **MySQL (XAMPP/phpMyAdmin)** – Backend database  
+- **MySQL (XAMPP/phpMyAdmin)** – Database management  
 - **mysql-connector-python** – Python-MySQL connector  
 - **Visual Studio Code** – Development IDE  
 
@@ -105,11 +103,10 @@ It’s a practical project for students, providing a real-world example of how l
 
 ## 🧑‍💻 Ideal For
 - Students learning Python + MySQL integration  
-- Academic mini-projects or portfolio building  
-- Beginners practicing CRUD operations  
-- Anyone interested in real-world library management simulations  
+- Beginners exploring healthcare management systems  
+- Academic mini-projects or portfolio demonstrations  
+- Anyone interested in hospital data management simulations  
 
 ---
 
-**Effortlessly manage books, users, and borrowing records with this interactive Library Management System!**
-
+**Manage patient records, monitor admissions, and streamline hospital operations with this interactive Hospital Patient Record System!**
