@@ -1,103 +1,115 @@
-# 📦 Project 2 – Inventory Management System (Python + MySQL)
+# 📚 Project 4 – Library Management System (Python + MySQL)
 
-Welcome to the **Inventory Management System**, a Python-powered solution integrated with MySQL to efficiently manage and track products in a store. Whether you’re running a small retail shop, warehouse, or practicing for an academic project, this system helps you keep product records organized, up-to-date, and easily accessible.  
+Welcome to the **Library Management System**, a Python-based application integrated with MySQL to manage books and library users efficiently. This system allows librarians or administrators to **add, update, delete books, register users, issue and return books**, and view all issued books — all through a simple menu-driven interface.  
 
-This menu-driven application is designed for simplicity and functionality. It allows users to **add, update, delete, and monitor products**, as well as generate quick reports to analyze the overall inventory value. With Python and MySQL working together, you get **real-time data management**, structured organization, and smooth database operations.
+It’s designed to simulate real-world library operations, providing hands-on experience in **data management, database integration, and backend logic**, making it perfect for academic projects or learning exercises.
 
 ---
 
 ## 🌟 Key Features
 
-### 🛒 1. Add Products
-- Quickly add new products by entering:
-  - **Product Name**  
-  - **Price**  
-  - **Quantity**  
-- Data is securely stored in the MySQL database, ensuring permanent and reliable records.  
-- Perfect for creating a structured product catalog and eliminating manual errors.
+### 📖 1. Add / Update / Delete Books
+- **Add Books:** Enter book details such as:
+  - **Book Title**  
+  - **Author**  
+  - **Quantity Available**  
+- **Update Books:** Modify existing book details using the **Book ID**.  
+- **Delete Books:** Remove books from the system if they are outdated or unavailable.  
+- Ensures accurate and up-to-date book records in the library database.
 
 ---
 
-### ✏️ 2. Update Product Information
-- Modify existing product details effortlessly:
-  - **Product Name**  
-  - **Price**  
-  - **Quantity**  
-- Updates are performed using the **product’s unique ID**, ensuring accuracy.  
-- Keeps your inventory current and organized for daily operations.
+### 👥 2. Register Users
+- Register new library users by collecting:
+  - **User Name**  
+  - **User ID / Membership ID**  
+  - **Contact Information**  
+- Keeps a structured record of all library members.  
+- Supports issuing books and tracking borrowings efficiently.
 
 ---
 
-### 🗑 3. Delete Products
-- Remove outdated or unwanted products using the **Product ID**.  
-- Maintains a clean database by eliminating unnecessary entries.  
-- Ensures only relevant products remain in stock for quick access.
+### 📚 3. Issue / Return Books
+- **Issue Books:** Assign books to registered users by entering:
+  - **User ID**  
+  - **Book ID**  
+- Automatically updates book availability in the database.  
+- **Return Books:** When books are returned:
+  - Updates inventory  
+  - Records return date  
+- Ensures accurate tracking of which user has which book at any time.
 
 ---
 
-### 📊 4. Check Stock
-- Retrieve a real-time list of all products in the inventory:
-  - **Product ID**  
-  - **Name**  
-  - **Price**  
-  - **Quantity**  
-- Helps you identify low-stock items, monitor availability, and plan restocking efficiently.
-
----
-
-### 📈 5. Generate Inventory Reports
-- Instantly calculate the **Total Stock Value**:
-Total Stock Value = SUM(price × quantity)
-
-- Provides insight into:
-  - **Financial value of current stock**  
-  - **Product trends**  
-  - **Inventory optimization**  
-- A handy feature for small business owners to estimate store value at a glance.
+### 📝 4. View Issued Books
+- Retrieve a list of all currently issued books along with:
+  - **Book ID**  
+  - **Book Title**  
+  - **User ID / Name**  
+  - **Issue Date**  
+- Helps librarians monitor borrowed books and due dates efficiently.
 
 ---
 
 ## 🗄 Database Integration (MySQL)
-- All product data is stored in a MySQL database for **reliability and permanence**.  
-- Table structure (`products`):
-  - `name` – Product Name  
-  - `price` – Product Price  
-  - `quantity` – Product Quantity  
-- Benefits:
-  - Efficient **CRUD operations**  
-  - Organized and scalable data storage  
-  - Fast and secure access to inventory records  
-- Python connects to MySQL using **mysql-connector-python**, ensuring smooth communication between the application and database.
+The system uses MySQL for storing all book and user information securely and reliably.  
+
+### **Tables Used**
+1. **books**
+   - `book_id` – Primary Key  
+   - `title` – Book Title  
+   - `author` – Author Name  
+   - `quantity` – Number of Copies Available  
+
+2. **users**
+   - `user_id` – Primary Key  
+   - `name` – User Name  
+   - `contact` – Contact Information  
+
+3. **issued_books**
+   - `issue_id` – Primary Key  
+   - `book_id` – Foreign Key (linked to books)  
+   - `user_id` – Foreign Key (linked to users)  
+   - `issue_date` – Date Book Was Issued  
+   - `return_date` – Date Book Was Returned  
+
+**Benefits of MySQL Integration:**
+- Secure and persistent storage for books and users  
+- Efficient **CRUD operations** for library management  
+- Real-time updates on issued and available books  
+- Structured organization and easy retrieval of records  
+
+Python interacts with MySQL using **mysql-connector-python**, providing smooth database operations.
 
 ---
 
 ## 🎯 Purpose of the Project
-This project was created to:  
-- Simplify inventory management for businesses and learners alike  
-- Reduce manual tracking errors  
-- Offer **quick insights** into stock levels and inventory value  
-- Provide hands-on experience with Python + MySQL integration  
-- Strengthen understanding of database-driven applications  
+The Library Management System aims to:
+- Digitize library operations for easy management  
+- Track books and users efficiently  
+- Automate book issuing and returning  
+- Maintain accurate and up-to-date records  
+- Teach **Python and MySQL CRUD operations** and backend logic  
 
-It’s an ideal mini-project for showcasing your ability to **design functional, real-world applications**.
+It’s a practical project for students, providing a real-world example of how libraries manage inventory and user data.
 
 ---
 
 ## ⚙️ Technologies Used
 - **Python 3** – Core programming language  
 - **MySQL (XAMPP/phpMyAdmin)** – Backend database  
-- **mysql-connector-python** – Database connection  
-- **Visual Studio Code** – Development environment
+- **mysql-connector-python** – Python-MySQL connector  
+- **Visual Studio Code** – Development IDE  
 
 ---
 
-## 🧑‍💻 Who Is This For?
-- Students learning **Python + MySQL integration**  
-- Mini-project submissions for academics or portfolio  
-- Beginners exploring **database-driven applications**  
-- Anyone wanting to build a **realistic inventory management system**  
+## 🧑‍💻 Ideal For
+- Students learning Python + MySQL integration  
+- Academic mini-projects or portfolio building  
+- Beginners practicing CRUD operations  
+- Anyone interested in real-world library management simulations  
 
 ---
 
-**Make your inventory management smarter, faster, and error-free with this system!**
+**Effortlessly manage books, users, and borrowing records with this interactive Library Management System!**
 

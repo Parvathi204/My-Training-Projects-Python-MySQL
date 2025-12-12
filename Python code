@@ -1,104 +1,263 @@
 import mysql.connector
+from datetime import date, datetime
+def connect():
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="meenakshi"
+    )
 
-# Database connection
-db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="",
-    database="meenakshi"
-)
+# ----------------------------
+# BOOK OPERATIONS
+# ----------------------------
+def add_book():
+    title = input("Enter book title: ").strip()
+    author = input("Enter author: ").strip()
+    try:
+        year = int(input("Enter published year: ").strip())
+    except:
+        print("Invalid year. Cancelling.\n")
+        return
 
-cursor = db.cursor()
+    db = connect()
+    cur = db.cursor()
+    try:
+        cur.execute("INSERT INTO books (title, author, year) VALUES (%s, %s, %s)",
+                    (title, author, year))
+        db.commit()
+        print("\n✔ Book added successfully!\n")
+    except mysql.connector.IntegrityError:
+        print("\n❌ A book with that title already exists.\n")
+    finally:
+        cur.close(); db.close()
 
-# 1. Add Product
-def add_product():
-    name = input("Enter product name: ")
-    price = float(input("Enter product price: "))
-    qty = int(input("Enter quantity: "))
+def update_book():
+    title = input("Enter the title of the book to update: ").strip()
+    db = connect(); cur = db.cursor()
+    cur.execute("SELECT * FROM books WHERE title=%s", (title,))
+    if not cur.fetchone():
+        print("\n❌ Book not found.\n"); cur.close(); db.close(); return
 
-    query = "INSERT INTO products (name, price, quantity) VALUES (%s, %s, %s)"
-    cursor.execute(query, (name, price, qty))
-    db.commit()
+    print("What do you want to update?")
+    print("1. Title")
+    print("2. Author")
+    print("3. Year")
+    choice = input("Choice: ").strip()
 
-    print("\n✔ Product Added Successfully!\n")
+    if choice == "1":
+        new_title = input("Enter new title: ").strip()
+        try:
+            cur.execute("UPDATE books SET title=%s WHERE title=%s", (new_title, title))
+            db.commit()
+            print("\n✔ Title updated.\n")
+        except mysql.connector.IntegrityError:
+            print("\n❌ A book with the new title already exists.\n")
 
-# 2. Update Product Info
-def update_product():
-    name = input("Enter product name to update: ")
+    elif choice == "2":
+        new_author = input("Enter new author: ").strip()
+        cur.execute("UPDATE books SET author=%s WHERE title=%s", (new_author, title))
+        db.commit()
+        print("\n✔ Author updated.\n")
 
-    new_price = float(input("Enter new price: "))
-    new_qty = int(input("Enter new quantity: "))
-
-    query = "UPDATE products SET price=%s, quantity=%s WHERE name=%s"
-    cursor.execute(query, (new_price, new_qty, name))
-    db.commit()
-
-    print("\n✔ Product Updated Successfully!\n")
-
-# 3. Delete Product
-def delete_product():
-    name = input("Enter product name to delete: ")
-
-    cursor.execute("DELETE FROM products WHERE name=%s", (name,))
-    db.commit()
-
-    print("\n🗑 Product Deleted.\n")
-
-# 4. Check Stock
-def check_stock():
-    name = input("Enter product name to check stock: ")
-
-    cursor.execute("SELECT quantity FROM products WHERE name=%s", (name,))
-    result = cursor.fetchone()
-
-    if result:
-        print(f"\nStock of '{name}': {result[0]} units\n")
+    elif choice == "3":
+        try:
+            new_year = int(input("Enter new year: ").strip())
+            cur.execute("UPDATE books SET year=%s WHERE title=%s", (new_year, title))
+            db.commit()
+            print("\n✔ Year updated.\n")
+        except:
+            print("\n❌ Invalid year.\n")
     else:
-        print("\n❌ Product Not Found\n")
+        print("\nInvalid choice.\n")
 
-# 5. Generate Report: Total Stock Value
-def stock_value_report():
-    cursor.execute("SELECT SUM(price * quantity) FROM products")
-    total_value = cursor.fetchone()[0]
+    cur.close(); db.close()
 
-    print("\n----- Total Stock Value -----")
-    print("Total Value: ₹", total_value if total_value else 0)
-    print()
+def delete_book():
+    title = input("Enter book title to delete: ").strip()
+    db = connect(); cur = db.cursor()
+    cur.execute("SELECT * FROM books WHERE title=%s", (title,))
+    if not cur.fetchone():
+        print("\n❌ Book not found.\n"); cur.close(); db.close(); return
 
-# View all products (Extra useful)
-def view_products():
-    cursor.execute("SELECT * FROM products")
-    rows = cursor.fetchall()
+    # optional: check if currently issued
+    cur.execute("SELECT * FROM issued WHERE title=%s AND status='issued'", (title,))
+    if cur.fetchone():
+        print("\n❌ Cannot delete — book is currently issued. Return it first.\n")
+        cur.close(); db.close(); return
 
-    print("\n----- Product List -----\n")
-    for row in rows:
-        print(f"Name: {row[0]} | Price: ₹{row[1]} | Quantity: {row[2]}")
-    print()
+    cur.execute("DELETE FROM books WHERE title=%s", (title,))
+    db.commit()
+    print("\n🗑 Book deleted.\n")
+    cur.close(); db.close()
 
-# Main Menu
+def view_books():
+    db = connect(); cur = db.cursor()
+    cur.execute("SELECT * FROM books")
+    rows = cur.fetchall()
+    if not rows:
+        print("\nNo books in the library.\n")
+    else:
+        print("\n--- BOOK LIST ---")
+        for r in rows:
+            print(f"Title: {r[0]} | Author: {r[1]} | Year: {r[2]}")
+        print()
+    cur.close(); db.close()
+
+# ----------------------------
+# USER OPERATIONS
+# ----------------------------
+def register_user():
+    name = input("Enter user name: ").strip()
+    contact = input("Enter contact info (phone/email): ").strip()
+
+    db = connect(); cur = db.cursor()
+    try:
+        cur.execute("INSERT INTO users (name, contact) VALUES (%s, %s)", (name, contact))
+        db.commit()
+        print("\n✔ User registered successfully!\n")
+    except mysql.connector.IntegrityError:
+        print("\n❌ A user with that name already exists.\n")
+    finally:
+        cur.close(); db.close()
+
+def view_users():
+    db = connect(); cur = db.cursor()
+    cur.execute("SELECT * FROM users")
+    rows = cur.fetchall()
+    if not rows:
+        print("\nNo registered users.\n")
+    else:
+        print("\n--- REGISTERED USERS ---")
+        for r in rows:
+            print(f"Name: {r[0]} | Contact: {r[1]}")
+        print()
+    cur.close(); db.close()
+
+# ----------------------------
+# ISSUE / RETURN OPERATIONS
+# ----------------------------
+def issue_book():
+    title = input("Enter book title to issue: ").strip()
+    user_name = input("Enter user name: ").strip()
+
+    db = connect(); cur = db.cursor()
+    # check book exists
+    cur.execute("SELECT * FROM books WHERE title=%s", (title,))
+    if not cur.fetchone():
+        print("\n❌ Book not found.\n"); cur.close(); db.close(); return
+
+    # check user exists
+    cur.execute("SELECT * FROM users WHERE name=%s", (user_name,))
+    if not cur.fetchone():
+        print("\n❌ User not registered. Register the user first.\n"); cur.close(); db.close(); return
+
+    # check if already issued to someone (simple check — if any 'issued' status exists)
+    cur.execute("SELECT * FROM issued WHERE title=%s AND status='issued'", (title,))
+    if cur.fetchone():
+        print("\n❌ Book already issued to another user. Cannot issue now.\n"); cur.close(); db.close(); return
+
+    issue_d = date.today()
+    cur.execute(
+        "INSERT INTO issued (title, user_name, issue_date, return_date, status) VALUES (%s, %s, %s, %s, %s)",
+        (title, user_name, issue_d, None, "issued")
+    )
+    db.commit()
+    print(f"\n✔ Book '{title}' issued to {user_name} on {issue_d}.\n")
+    cur.close(); db.close()
+
+def return_book():
+    title = input("Enter book title to return: ").strip()
+    user_name = input("Enter user name: ").strip()
+
+    db = connect(); cur = db.cursor()
+    # find the issued row with status 'issued'
+    cur.execute(
+        "SELECT issue_date FROM issued WHERE title=%s AND user_name=%s AND status='issued'",
+        (title, user_name)
+    )
+    row = cur.fetchone()
+    if not row:
+        print("\n❌ No record found of this book being issued to this user.\n"); cur.close(); db.close(); return
+
+    issue_date = row[0]
+    return_d = date.today()
+    cur.execute(
+        "UPDATE issued SET return_date=%s, status=%s WHERE title=%s AND user_name=%s AND issue_date=%s",
+        (return_d, "returned", title, user_name, issue_date)
+    )
+    db.commit()
+    print(f"\n✔ Book '{title}' returned by {user_name} on {return_d}.\n")
+    cur.close(); db.close()
+
+def view_issued_books():
+    db = connect(); cur = db.cursor()
+    cur.execute("SELECT title, user_name, issue_date, return_date, status FROM issued ORDER BY issue_date DESC")
+    rows = cur.fetchall()
+    if not rows:
+        print("\nNo issued/returned records.\n")
+    else:
+        print("\n--- ISSUED BOOKS ---")
+        for r in rows:
+            title, user_name, issue_d, return_d, status = r
+            print(f"Book: {title} | User: {user_name} | Issued: {issue_d} | Returned: {return_d} | Status: {status}")
+        print()
+    cur.close(); db.close()
+
+# ----------------------------
+# SIMPLE REPORTS
+# ----------------------------
+def total_books_report():
+    db = connect(); cur = db.cursor()
+    cur.execute("SELECT COUNT(*) FROM books")
+    total = cur.fetchone()[0]
+    print(f"\nTotal books in library: {total}\n")
+    cur.close(); db.close()
+
+def currently_issued_report():
+    db = connect(); cur = db.cursor()
+    cur.execute("SELECT COUNT(*) FROM issued WHERE status='issued'")
+    total = cur.fetchone()[0]
+    print(f"\nCurrently issued books count: {total}\n")
+    cur.close(); db.close()
+
+# ----------------------------
+# MAIN MENU
+# ----------------------------
 def main():
     while True:
-        print("=== Inventory Management System ===")
-        print("1. Add Product")
-        print("2. Update Product Info")
-        print("3. Delete Product")
-        print("4. Check Stock")
-        print("5. Generate Total Stock Value Report")
-        print("6. View All Products")
-        print("7. Exit")
+        print("===== LIBRARY MANAGEMENT SYSTEM =====")
+        print("1. Add Book")
+        print("2. Update Book Info")
+        print("3. Delete Book")
+        print("4. View All Books")
+        print("5. Register User")
+        print("6. View Users")
+        print("7. Issue Book")
+        print("8. Return Book")
+        print("9. View Issued Books")
+        print("10. Total Books Report")
+        print("11. Currently Issued Report")
+        print("12. Exit")
 
-        choice = input("Choose an option: ")
+        choice = input("Enter choice: ").strip()
 
-        if choice == "1": add_product()
-        elif choice == "2": update_product()
-        elif choice == "3": delete_product()
-        elif choice == "4": check_stock()
-        elif choice == "5": stock_value_report()
-        elif choice == "6": view_products()
-        elif choice == "7":
-            print("Exiting...")
+        if choice == "1": add_book()
+        elif choice == "2": update_book()
+        elif choice == "3": delete_book()
+        elif choice == "4": view_books()
+        elif choice == "5": register_user()
+        elif choice == "6": view_users()
+        elif choice == "7": issue_book()
+        elif choice == "8": return_book()
+        elif choice == "9": view_issued_books()
+        elif choice == "10": total_books_report()
+        elif choice == "11": currently_issued_report()
+        elif choice == "12":
+            print("Exiting program...")
             break
         else:
-            print("\nInvalid option! Try again.\n")
+            print("\nInvalid choice, try again.\n")
 
-main()
+if __name__ == "__main__":
+    main()
