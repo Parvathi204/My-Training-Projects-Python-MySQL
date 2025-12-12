@@ -1,129 +1,104 @@
 import mysql.connector
 
-# ------------------------------------------
-# CONNECT TO MYSQL
-# ------------------------------------------
-def connect():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="meenakshi"
-    )
+# Database connection
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="",
+    database="meenakshi"
+)
 
-# ------------------------------------------
-# ADD ITEMS TO MENU
-# ------------------------------------------
-def add_item():
-    item = input("Enter item name: ")
-    price = float(input("Enter price: "))
+cursor = db.cursor()
 
-    db = connect()
-    cur = db.cursor()
-
-    query = "INSERT INTO menu (item_name, price) VALUES (%s, %s)"
-    cur.execute(query, (item, price))
-    db.commit()
-
-    print("\n✔ Item added to menu!\n")
-
-# ------------------------------------------
-# PLACE ORDER
-# ------------------------------------------
-def place_order():
-    item = input("Enter item name to order: ")
+# 1. Add Product
+def add_product():
+    name = input("Enter product name: ")
+    price = float(input("Enter product price: "))
     qty = int(input("Enter quantity: "))
 
-    db = connect()
-    cur = db.cursor()
-
-    # Check if item exists
-    cur.execute("SELECT price FROM menu WHERE item_name=%s", (item,))
-    result = cur.fetchone()
-
-    if not result:
-        print("\n❌ Item not found in menu!\n")
-        return
-
-    # Insert into orders
-    query = "INSERT INTO orders (item_name, quantity, payment_status) VALUES (%s, %s, %s)"
-    cur.execute(query, (item, qty, "Pending"))
+    query = "INSERT INTO products (name, price, quantity) VALUES (%s, %s, %s)"
+    cursor.execute(query, (name, price, qty))
     db.commit()
 
-    print("\n✔ Order placed successfully! Payment Pending.\n")
+    print("\n✔ Product Added Successfully!\n")
 
-# ------------------------------------------
-# TRACK ORDER HISTORY
-# ------------------------------------------
-def order_history():
-    db = connect()
-    cur = db.cursor()
+# 2. Update Product Info
+def update_product():
+    name = input("Enter product name to update: ")
 
-    cur.execute("SELECT * FROM orders")
-    rows = cur.fetchall()
+    new_price = float(input("Enter new price: "))
+    new_qty = int(input("Enter new quantity: "))
 
-    print("\n----- ORDER HISTORY -----\n")
-    for r in rows:
-        print(f"Order ID: {r[0]} | Item: {r[1]} | Qty: {r[2]} | Payment: {r[3]}")
+    query = "UPDATE products SET price=%s, quantity=%s WHERE name=%s"
+    cursor.execute(query, (new_price, new_qty, name))
+    db.commit()
+
+    print("\n✔ Product Updated Successfully!\n")
+
+# 3. Delete Product
+def delete_product():
+    name = input("Enter product name to delete: ")
+
+    cursor.execute("DELETE FROM products WHERE name=%s", (name,))
+    db.commit()
+
+    print("\n🗑 Product Deleted.\n")
+
+# 4. Check Stock
+def check_stock():
+    name = input("Enter product name to check stock: ")
+
+    cursor.execute("SELECT quantity FROM products WHERE name=%s", (name,))
+    result = cursor.fetchone()
+
+    if result:
+        print(f"\nStock of '{name}': {result[0]} units\n")
+    else:
+        print("\n❌ Product Not Found\n")
+
+# 5. Generate Report: Total Stock Value
+def stock_value_report():
+    cursor.execute("SELECT SUM(price * quantity) FROM products")
+    total_value = cursor.fetchone()[0]
+
+    print("\n----- Total Stock Value -----")
+    print("Total Value: ₹", total_value if total_value else 0)
     print()
 
-# ------------------------------------------
-# UPDATE PAYMENT STATUS
-# ------------------------------------------
-def update_payment():
-    order_id = int(input("Enter order ID to update payment: "))
+# View all products (Extra useful)
+def view_products():
+    cursor.execute("SELECT * FROM products")
+    rows = cursor.fetchall()
 
-    print("Choose Payment Status:")
-    print("1. Paid")
-    print("2. Cancelled")
+    print("\n----- Product List -----\n")
+    for row in rows:
+        print(f"Name: {row[0]} | Price: ₹{row[1]} | Quantity: {row[2]}")
+    print()
 
-    ch = input("Enter your choice: ")
-
-    if ch == "1":
-        status = "Paid"
-    elif ch == "2":
-        status = "Cancelled"
-    else:
-        print("Invalid choice!")
-        return
-
-    db = connect()
-    cur = db.cursor()
-
-    query = "UPDATE orders SET payment_status=%s WHERE id=%s"
-    cur.execute(query, (status, order_id))
-    db.commit()
-
-    print("\n✔ Payment status updated!\n")
-
-# ------------------------------------------
-# MAIN MENU
-# ------------------------------------------
+# Main Menu
 def main():
     while True:
-        print("===== ONLINE ORDER SYSTEM =====")
-        print("1. Add Item to Menu")
-        print("2. Place Order")
-        print("3. View Order History")
-        print("4. Update Payment Status")
-        print("5. Exit")
+        print("=== Inventory Management System ===")
+        print("1. Add Product")
+        print("2. Update Product Info")
+        print("3. Delete Product")
+        print("4. Check Stock")
+        print("5. Generate Total Stock Value Report")
+        print("6. View All Products")
+        print("7. Exit")
 
-        choice = input("Enter your choice: ")
+        choice = input("Choose an option: ")
 
-        if choice == "1":
-            add_item()
-        elif choice == "2":
-            place_order()
-        elif choice == "3":
-            order_history()
-        elif choice == "4":
-            update_payment()
-        elif choice == "5":
-            print("Exiting program...")
+        if choice == "1": add_product()
+        elif choice == "2": update_product()
+        elif choice == "3": delete_product()
+        elif choice == "4": check_stock()
+        elif choice == "5": stock_value_report()
+        elif choice == "6": view_products()
+        elif choice == "7":
+            print("Exiting...")
             break
         else:
-            print("Invalid choice! Try again.\n")
+            print("\nInvalid option! Try again.\n")
 
-
-# RUN PROGRAM
 main()

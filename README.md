@@ -1,114 +1,103 @@
-# 🏦 Project 3 – Banking System (Python + MySQL)
+# 📦 Project 2 – Inventory Management System (Python + MySQL)
 
-Welcome to the **Banking System**, a Python-based simulation of real-world bank operations integrated with MySQL. This project allows you to **create accounts, manage funds, and track transactions**—all from a simple, menu-driven interface.  
+Welcome to the **Inventory Management System**, a Python-powered solution integrated with MySQL to efficiently manage and track products in a store. Whether you’re running a small retail shop, warehouse, or practicing for an academic project, this system helps you keep product records organized, up-to-date, and easily accessible.  
 
-Designed for learning and demonstration purposes, this system provides a hands-on experience of **financial data management, database integration, and backend logic**, making it ideal for students, beginners, and enthusiasts exploring Python and MySQL.
+This menu-driven application is designed for simplicity and functionality. It allows users to **add, update, delete, and monitor products**, as well as generate quick reports to analyze the overall inventory value. With Python and MySQL working together, you get **real-time data management**, structured organization, and smooth database operations.
 
 ---
 
 ## 🌟 Key Features
 
-### 🏛 1. Create Account
-- Open a new bank account by entering:
-  - **Customer Name**  
-  - **Account Type** (Savings/Current)  
-  - **Initial Deposit**  
-- Each account receives a **unique Account Number** for easy identification.  
-- Records are stored securely in MySQL, ensuring permanent and organized storage.  
-- Perfect for simulating real banking operations in a controlled environment.
+### 🛒 1. Add Products
+- Quickly add new products by entering:
+  - **Product Name**  
+  - **Price**  
+  - **Quantity**  
+- Data is securely stored in the MySQL database, ensuring permanent and reliable records.  
+- Perfect for creating a structured product catalog and eliminating manual errors.
 
 ---
 
-### 💰 2. Deposit Money
-- Add funds to an existing account seamlessly.  
-- Steps involved:
-  - Enter **Account Number**  
-  - Enter **Deposit Amount**  
-- Updates account balance in real-time.  
-- Each deposit is recorded in the **transaction history** for accountability.  
+### ✏️ 2. Update Product Information
+- Modify existing product details effortlessly:
+  - **Product Name**  
+  - **Price**  
+  - **Quantity**  
+- Updates are performed using the **product’s unique ID**, ensuring accuracy.  
+- Keeps your inventory current and organized for daily operations.
 
 ---
 
-### 🏧 3. Withdraw Money
-- Withdraw money from your account securely.  
-- Checks are performed to ensure **sufficient balance** before withdrawal.  
-- The withdrawal is recorded in the **transaction log**, maintaining financial accuracy.  
-- Mimics real-world ATM or teller operations.
+### 🗑 3. Delete Products
+- Remove outdated or unwanted products using the **Product ID**.  
+- Maintains a clean database by eliminating unnecessary entries.  
+- Ensures only relevant products remain in stock for quick access.
 
 ---
 
-### 📋 4. View Balance
-- Quickly check the current balance of any account.  
-- Helps users monitor their funds and validate deposits or withdrawals.  
-- Ensures transparency and easy verification of account status.
+### 📊 4. Check Stock
+- Retrieve a real-time list of all products in the inventory:
+  - **Product ID**  
+  - **Name**  
+  - **Price**  
+  - **Quantity**  
+- Helps you identify low-stock items, monitor availability, and plan restocking efficiently.
 
 ---
 
-### 📝 5. Transaction History
-- Every deposit and withdrawal is logged with:
-  - **Account Number**  
-  - **Transaction Type** (Deposit/Withdrawal)  
-  - **Amount**  
-  - **Date & Time**  
-- Provides a complete **financial activity overview**, similar to real bank statements.  
-- Essential for audits, verification, and financial tracking.
+### 📈 5. Generate Inventory Reports
+- Instantly calculate the **Total Stock Value**:
+Total Stock Value = SUM(price × quantity)
+
+- Provides insight into:
+  - **Financial value of current stock**  
+  - **Product trends**  
+  - **Inventory optimization**  
+- A handy feature for small business owners to estimate store value at a glance.
 
 ---
 
 ## 🗄 Database Integration (MySQL)
-The system uses MySQL to store accounts and transaction details for **reliability and permanence**.  
-
-### **Tables Used**
-1. **accounts**
-   - `account_no` – Primary Key  
-   - `name` – Customer Name  
-   - `acc_type` – Account Type  
-   - `balance` – Current Balance  
-
-2. **transactions**
-   - `trans_id` – Primary Key, Auto Increment  
-   - `account_no` – Foreign Key (linked to accounts)  
-   - `type` – Deposit/Withdrawal  
-   - `amount` – Transaction Amount  
-   - `date_time` – Timestamp  
-
-**Benefits of MySQL Integration:**
-- Efficient and secure **CRUD operations**  
-- Structured data organization  
-- Easy retrieval of account and transaction details  
-- Real-time balance updates  
-
-Python interacts with MySQL using **mysql-connector-python**, ensuring smooth and reliable database communication.
+- All product data is stored in a MySQL database for **reliability and permanence**.  
+- Table structure (`products`):
+  - `name` – Product Name  
+  - `price` – Product Price  
+  - `quantity` – Product Quantity  
+- Benefits:
+  - Efficient **CRUD operations**  
+  - Organized and scalable data storage  
+  - Fast and secure access to inventory records  
+- Python connects to MySQL using **mysql-connector-python**, ensuring smooth communication between the application and database.
 
 ---
 
 ## 🎯 Purpose of the Project
-The Banking System is designed to:
-- Simulate realistic bank operations in a controlled environment  
-- Provide hands-on experience with Python and MySQL  
-- Teach **CRUD operations, data integrity, and transaction tracking**  
-- Strengthen understanding of backend logic and database relationships  
-- Offer a mini-project suitable for academic submission, portfolio, or learning
+This project was created to:  
+- Simplify inventory management for businesses and learners alike  
+- Reduce manual tracking errors  
+- Offer **quick insights** into stock levels and inventory value  
+- Provide hands-on experience with Python + MySQL integration  
+- Strengthen understanding of database-driven applications  
 
-It’s a practical tool for understanding **how financial systems work** at a basic level and for building confidence in programming with databases.
+It’s an ideal mini-project for showcasing your ability to **design functional, real-world applications**.
 
 ---
 
 ## ⚙️ Technologies Used
-- **Python 3** – Core language for development  
-- **MySQL (XAMPP/phpMyAdmin)** – Database management  
-- **mysql-connector-python** – Python-MySQL connector  
-- **Visual Studio Code** – Development IDE  
+- **Python 3** – Core programming language  
+- **MySQL (XAMPP/phpMyAdmin)** – Backend database  
+- **mysql-connector-python** – Database connection  
+- **Visual Studio Code** – Development environment
 
 ---
 
-## 🧑‍💻 Ideal For
+## 🧑‍💻 Who Is This For?
 - Students learning **Python + MySQL integration**  
-- Beginners exploring backend development  
-- Academic mini-project submissions  
-- Anyone wanting a **realistic banking simulation**  
+- Mini-project submissions for academics or portfolio  
+- Beginners exploring **database-driven applications**  
+- Anyone wanting to build a **realistic inventory management system**  
 
 ---
 
-**Manage accounts, track transactions, and experience banking logic like a pro!**
+**Make your inventory management smarter, faster, and error-free with this system!**
 
