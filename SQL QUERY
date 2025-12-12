@@ -1,0 +1,9 @@
+#SQL QUERIES
+#Create a database or use a database
+#Then create a table in the name of Products
+
+CREATE TABLE products (
+    name VARCHAR(50) PRIMARY KEY,
+    price FLOAT,
+    quantity INT
+);
